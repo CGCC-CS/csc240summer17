@@ -11,9 +11,9 @@ int main () {
   printf("t: [%p] %p, %s\n", (void *) &t, (void *) t, t);
 
   printf("\n==== print character ====\n");
-  printf("p: [%p] %c\n", (void *) &p, *p);
-  printf("s: [%p] %c\n", (void *) &s, *s);
-  printf("t: [%p] %c\n", (void *) &t, *t);
+  printf("p: [%p] %c [%d]\n", (void *) &p, *p, *p);
+  printf("s: [%p] %c [%d]\n", (void *) &s, *s, *s);
+  printf("t: [%p] %c [%d]\n", (void *) &t, *t, *t);
 
   printf("\n==== print string+1 ====\n");
   printf("p: [%p] %p, %s\n", (void *) &p, (void *) p, (p+1));

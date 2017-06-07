@@ -6,7 +6,7 @@ int main () {
   int * ptr;
   int ii;
 
-  ptr = arr;
+  ptr = arr;     /* equivalent ptr = &arr[0]; */
 
   /* array indexing */
   printf("array indexing:\n  ");
@@ -40,8 +40,27 @@ int main () {
   printf("  size of arr=%d\n", sizeof(arr));
   printf("  size of ptr=%d\n", sizeof(ptr));
 
+  /* you can assign a value to a pointer, not an array name */
   ptr=&ii;
-  /*  arr=&ii; */
+  /*  arr=&ii; */  /* This doesn't work! */
+
+  /* incrementing a pointer */
+  ptr = arr;
+  printf("incrementing a pointer :\n  ");
+  for(ii=0;ii<5;ii++) {
+    printf("%d ", *ptr);
+    ptr++;
+  }
+  printf("\n");
+
+  printf("incrementing an array - not allowed!:\n  ");
+  /*
+  for(ii=0;ii<5;ii++) {
+    printf("%d ", *arr);
+    arr++;
+  }
+  printf("\n");
+  */
 
   return 0;
 }
