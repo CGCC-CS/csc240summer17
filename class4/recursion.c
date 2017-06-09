@@ -36,6 +36,7 @@ int fibtail_helper(int n, int f2, int f1) {
      return fibtail_helper(n-1, f1, f1+f2);
 }
 
+/* iterative */
 int fibwhile(int n) {
   int f=1, f1 = 1, f2 = 1;
   int ii=n;
@@ -60,6 +61,9 @@ int main() {
   printf("fib(%d) = %d\n", MAX, fib(MAX));
 */
 
+/*
+  printf("fib(%d) = %d\n", MAX, fib(MAX));
+*/
   printf("fibtail(%d) = %d\n", MAX, fibtail(MAX));
 
   for (ii=0;ii<MAX;ii++) {
@@ -67,5 +71,6 @@ int main() {
   }
   return 0;
 }
+
 
 

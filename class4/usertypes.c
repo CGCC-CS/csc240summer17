@@ -18,7 +18,8 @@ typedef union {
   char s[12];
 } my_union_t;
 
-int main() {
+
+int main () {
   num x = 10; 
   boolean is_it_true = false;
   my_struct_t myStruct = {10, true, "Hello!"};
@@ -32,21 +33,19 @@ int main() {
 
   printf("\nBefore:\n");
   printf("myStruct: %d, %d, %s\n", myStruct.n, myStruct.success, myStruct.s);
-  printf("ptr: %d, %d, %s\n", ptr->n, ptr->success, ptr->s);
-
+  printf("ptr: %d, %d, %s\n", ptr->n, ptr->success, ptr->s);  
   ptr->n = 30;
-  strncpy(ptr->s, "World!", 11);
   ptr->success = false;
+  strncpy(ptr->s, "World!", 11);
   printf("\nAfter:\n");
   printf("myStruct: %d, %d, %s\n", myStruct.n, myStruct.success, myStruct.s);
-  printf("ptr: %d, %d, %s\n", ptr->n, ptr->success, ptr->s);
+  printf("ptr: %d, %d, %s\n", ptr->n, ptr->success, ptr->s);  
 
   printf("\nUnion example:\n");
-  myUnion.n = 0x41424344;
-  printf("myUnion: %d, %s\n", myUnion.n, myUnion.s);
+  myUnion.n = 0x41424344;  
+  printf("myUnion: %x, %s\n", myUnion.n, myUnion.s);
   strncpy(myUnion.s, "41424344", 11);
   printf("myUnion: %x, %s\n", myUnion.n, myUnion.s);
-
-
+ 
   return 0;
 }
