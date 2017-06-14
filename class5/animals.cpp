@@ -4,16 +4,18 @@ using namespace std;
 
 class Animal {
   public: 
+    // Pure virtual method - must be overridden by any non-abstract 
+    //   derrived class.
     virtual void speak() = 0;
 
-    // Virtual method - can be overridden by the child class.  The type of
+    // Virtual method - can be overridden by the derrived class.  The type of
     //   the object being pointed to determines the method that gets called.
     virtual void move() {
        cout << "I'm moving" << endl;
     }
 
-    // Non-virtual method - can be overridden by the child class.  The type 
-    //   of the pointer determines the method that gets called.
+    // Non-virtual method - can be overridden by the derrived class.  The 
+    //   type of the pointer determines the method that gets called.
     void name() {
        cout << "Animal" << endl;
     }
@@ -49,8 +51,9 @@ class Cat : public Animal {
     }
 
 };
+
 int main () {
-  //Animal a;
+  /*Animal a;*/
   Animal *a1;
   Dog d1, *d2;
   Cat c1, *c2;
@@ -66,7 +69,7 @@ int main () {
   a.name();
   */
 
-  /* Cannot instantiate an abstract class 
+  /*
   cout << endl << "Animal pointer pointing to animal object: " << endl;
   a1 = new Animal();
   a1->speak();

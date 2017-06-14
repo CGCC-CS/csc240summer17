@@ -1,17 +1,19 @@
 #include<iostream>
 #include<string>
 
+using namespace std;
+
 int main() {
   int count;
-  std::string str; 
+  string str; 
   
-  std::cout << "Enter a number: ";
-  std::cin >> count;
-  std::cout << "Enter a string: ";
-  std::cin >> str;      // Only gets characters until next whitespace
+  cout << "Enter a number: ";
+  cin >> count;
+  cout << "Enter a string: ";
+  cin >> str;      // Only gets characters until next whitespace
  
   for (int ii=0;ii<count;ii++) {
-    std::cout << ii << ": " << str << std::endl;
+    cout << ii << ": " << str << endl;
   } 
   return 0;
 }
