@@ -21,11 +21,11 @@ class myClass {
   }
 
   // Copy constructor
-  myClass(const myClass & original) {
+  myClass(const myClass& original) {
     a = new int;
     *a = *(original.a);
-     b = original.b * 10;
-    cout << "  COPY Constructor " << b << ": " << *a << " (" << a << ")" << endl;
+    b = original.b * 10; 
+    cout << "  Copy constructor " << b << ": " << *a << " (" << a << ")" << endl;
   }
 
   // Destructor
@@ -46,6 +46,7 @@ void func(myClass k) {
   myClass c3(3);
   cout << "    FUNC: done declare c3" << endl;
   cout << "    FUNC: ";
+  *k.a = 4;
   k.print("k");
   cout << "    FUNC: ";
   c3.print("c3");
@@ -58,21 +59,23 @@ int main () {
   myClass c1(1);
   cout << "MAIN: done declare c1" << endl;
   cout << "MAIN: begin declare *c2" << endl;
-  cout << "MAIN: done declare *c2" << endl;
   myClass *c2;
+  cout << "MAIN: done declare *c2" << endl;
   cout << "MAIN: begin allocate *c2" << endl;
   c2 = new myClass(2);
   cout << "MAIN: done allocate *c2" << endl;
-  
-  cout << "MAIN: begin delete *c2" << endl;
-  delete c2;
-  cout << "MAIN: done delete *c2" << endl;
 
   cout << "MAIN: call func(c1)" << endl;
   func(c1);
   cout << "MAIN: return from func(c1)" << endl;
 
-  cout << "MAIN: end" << endl;
+  cout << "MAIN: begin delete *c2" << endl;
+  delete c2;
+  cout << "MAIN: done delete *c2" << endl;
+
+  cout << "MAIN: print c1 after function call" << endl;
+  c1.print("end of main");
+
+  cout << "MAIN: exit" << endl;
   return 0;
 }
-   
