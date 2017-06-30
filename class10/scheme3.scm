@@ -1,32 +1,32 @@
 #lang scheme
+(define element-count
+  (lambda (lst)
+    (cond
+      ((null? lst) 0)
+      ((not (pair? lst)) 1)
+      (else (+ (element-count (car lst)) (element-count (cdr lst)))))))
+  
+(element-count '(1 2 3 4))
+(element-count '(x y z w))
+(element-count '(hello world (1 2 3 4) "csc" "220" (x y z w)))
 
-(define member-of
-  (lambda (e lst)
-    (if (null? lst)
-        #f
-        (if (= e (car lst))
-            #t
-            (member-of e (cdr lst))))))
-(member-of 3 '(1 2 3 4))
-(member-of 3 '(2 4 6 8 10))
-;(member-of 3 '(1 . 3))
-(member-of 3 '(1 . (3 . 4)))
-;(member-of 3 '(1 . (4 . 3)))
-(member-of 3 '(1 . (4 . (3 . '()))))
-(list? '(1 . (4 . (3 . '()))))
-(list? '(1 . (4 . 3)))
-
-; Higher order procedures
 (define red
   (lambda (operation base-case lst)
     (if (null? lst)
         base-case
         (operation (car lst) (red operation base-case (cdr lst))))))
-(red + 0 '(1 2 3 4 5))  ; add all #'s
-(red * 1 '(1 2 3 4 5))  ; multiply all #'s 
-(red (lambda (head tail) (cons (* head head) tail)) '() '(1 2 3 4 5)) ; square
-(red (lambda (a b) (+ 1 b)) 0 '(1 2 3 4 5)) ; find length
-(red (lambda (a b) 42) 21 '(1 2 3 4 5))
+
+(define sum-all
+  (lambda (lst)
+    (red + 0 lst)))
+(define mult-all
+  (lambda (lst)
+    (red * 1 lst)))
+(sum-all '(5 6 7 8))
+(mult-all '(5 6 7 8))
+(red (lambda (x y) (cons (* x x) y)) '() '(5 6 7 8))  ;square-list
+(red (lambda (x y) (+ 1 y)) 0 '(5 6 7 8))  ; length
+(red + 0 '(5 6 7 8))  ; sumlist
 
 (newline)"Higher order functions - apply"
 (define lst '(1 2 3 4 5 6 7 8 9 10 11 12 13))
@@ -38,51 +38,46 @@
 (apply * lstn)
 
 (newline)"Higher order functions - map"
-(map (lambda (x) (+ x 1)) lst)
-(map (lambda (x) (+ x 1)) lstn)
-(map (lambda (x) (if (< x 0) 0 x)) lst)
-(map (lambda (x) (if (< x 0) 0 x)) lstn)
-(map (lambda (head tail) (cons (* head head) tail)) lstn lstn)
+(map (lambda (x) (+ 1 x)) lst)
+(map (lambda (x) (+ 1 x)) lstn)
+(map (lambda (x) (if (string? x) 0 x)) '(1 "TWO" 3 "FOUR" "FIVE" 6))
+(map (lambda (x y) (cons y (* x x))) lstn lstn)
 
-(newline)"Higher order functions - filter"
-(filter (lambda (x) (>= x 0)) lst)
+(newline)"Higher order functions - filter)"
 (filter (lambda (x) (>= x 0)) lstn)
 (filter number? badlst)
-(filter (lambda (x) (not (= (remainder x 2) 0))) lst)
+(apply + (map (lambda (x) (* x x)) (filter number? badlst)))
 
-(newline)"Functions are first-class objects"
+(newline)"Functions are first-class objects - so you can return them!"
+
 (define quad
-  (lambda (lst)
-    (let ((a (car lst))
-          (b (cadr lst))
-          (c (caddr lst)))
-      (lambda (x)
-        (+ (* a x x) (* b x) c)))))
-
-(define f1 (quad '(1 1 1)))
-(define f2 (quad '(1 2 3)))
-(define f3 (quad '(2 4 2)))
+  (lambda (a b c)
+    (lambda (x)
+      (+ (* a x x) (* b x) c))))
+(define f1 (quad 1 1 1))  ; f(x) = x^2 + x + 1
+(define f2 (quad 1 2 3))  ; f(x) = x^2 + 2x + 3
+(define f3 (quad 2 4 2))  ; f(x) = 2x^2 + 4x + 2
+(define f4 (quad 1 (/ 1 2) (/ 1 4)))
 (f1 1)
 (f1 2)
-(f2 1)
-(f2 4)
-(f3 4)
-(f3 10)
+(quad 2 3 4)
+(f4 1)
 
 (newline)"Advanced examples"
-; numbers in badlist which are <8 when incremented
+; numbers in badlst which are < 8 when incremented
+;first attempt
 (filter (lambda (x) (< x 8))
         (map (lambda (x) (+ x 1))
              (filter number? badlst)))
-
-; sum numbers in badlist which are <8 when incremented
-(apply +
-       (filter (lambda (x) (< x 8))
-        (map (lambda (x) (+ x 1))
-             (filter number? badlst))))
+(filter (lambda (x) (< (+ x 1) 8))
+        (filter number? badlst))
+; sum the numbers in badlst which are < 8 when incremented
+(apply + 
+       (filter (lambda (x) (< (+ x 1) 8))
+               (filter number? badlst)))
 
 (newline)"Towers of Hanoi"
-(define hanoi 
+(define hanoi    ; uses side-effects
   (lambda (n source center destination)
     (if (= n 1)  ; stopping condition
       (begin  
@@ -103,94 +98,71 @@
 (newline)"let structures (scope)"
 (define let-test
   (lambda (x)
-    (let
+    (let 
         ((a (* 2 x))
          (b (+ x 1))
          (c 10))
       (+ x a b c))))
 (let-test 5)
 
-(define min
+; Use let to reduce # of calls to (min1 (cdr lst))
+(define min1
   (lambda (lst)
     (if (= (length lst) 1)
         (car lst)
         (let
-            ((cmin (min (cdr lst))))
-          (if (< (car lst) cmin)
+            ((cdrmin (min1 (cdr lst))))
+          (if (< (car lst) cdrmin)
               (car lst)
-              cmin)))))
-(min lst)
-(min lstn)
+              cdrmin)))))
 
-; another example
+; Use let to reduce # of calls to (car lst) & (min1 (cdr lst))
+;  Note we can't use a single let for both!
 (define min2
   (lambda (lst)
-    (let
-        ((first (car lst)))
-    (if (= (length lst) 1)
-        first
-        (let
-            ((cmin (min (cdr lst))))
-          (if (< first cmin)
-              first
-              cmin))))))
+    (let 
+        ((c (car lst)))
+      (if (= (length lst) 1)
+          c
+          (let
+              ((cdrmin (min2 (cdr lst))))
+            (if (< c cdrmin)
+                c
+                cdrmin))))))
+(min1 lst)
+(min1 lstn)
 (min2 lst)
 (min2 lstn)
 
 (define a 1)
-(let 
-    ((a 4)
-     (b 6))
+(let ((a 4)
+      (b 6))
   (+ a b))
-a
 
 ((lambda (a b) (+ a b)) 4 6)
 
+; Be careful of your scope!
 (let
     ((a 4)
-     (b (+ a 2)))
-  (+ a b))
-
-(define habitat-material
-  (lambda (height radius thickness)
-    (let
-        ( (pi 3.14159265) )
-          (let
-              ( (cylinder_volume
-                 (lambda (r h)
-                   (* h (* pi (* r r))))))
-            (- 
-             (cylinder_volume radius height)
-             (cylinder_volume (- radius thickness) (- height (* 2 thickness))))))))
-(habitat-material 10 5 1)
+     (b (+ a 2)))  ; a comes from outer scope
+   (+ a b))
 
 (let
-    ((+ 10)
-     (- 4)
-     (* -))
-  (* + -))
+    ((a 4))
+  (let
+      ((b (+ a 2))) ; a comes from inner scope
+    (+ a b)))
 
 (newline)"External code"
+;note - usually this should be at the TOP of the file
 (require "scheme3inc.scm")
 (fib-tail 10)
+;(fib 10)   ; Not provided in scheme3inc.scm
 
 ; Really advanced stuff - not needed for project
 (define hello
-  (case-lambda
+  (case-lambda  ; allow
     (() "Hello World")
     ((name) (string-append "Hello " name))))
 (hello)
 (hello "John")
-
-(define multiple-of-2-and-5
-  (lambda (n)
-    (match (list (remainder n 2) (remainder n 5))
-      ((list 0 0) #t)
-      ((list _ 0) 'almost)  ; if remainder n 5 = 0
-      (_ #f))))
-(multiple-of-2-and-5 20)
-(multiple-of-2-and-5 15)
-(multiple-of-2-and-5 17)
-
-(map multiple-of-2-and-5 lst)
-(map multiple-of-2-and-5 lstn)

@@ -9,3 +9,9 @@
     (if (<= x 0)
         f2
         (fib-tail-acc (- x 1) f1 (+ f1 f2)))))
+
+; not provided to including source 
+(define (fib x)
+  (if (< x 2)
+      1
+      (+ (fib (- x 1) (- x 2)))))
