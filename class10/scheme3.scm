@@ -166,3 +166,17 @@
     ((name) (string-append "Hello " name))))
 (hello)
 (hello "John")
+
+(define multiple-of-2-and-5
+  (lambda (n)
+    (match (list (remainder n 2) (remainder n 5))
+      ((list 0 0) #t)
+      ((list _ 0) 'almost)  ; if remainder n 5 = 0
+      (_ #f))))
+(multiple-of-2-and-5 20)
+(multiple-of-2-and-5 15)
+(multiple-of-2-and-5 17)
+
+(map multiple-of-2-and-5 lst)
+(map multiple-of-2-and-5 lstn)
+

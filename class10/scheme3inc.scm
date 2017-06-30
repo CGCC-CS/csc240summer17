@@ -12,6 +12,6 @@
 
 ; not provided to including source 
 (define (fib x)
-  (if (< x 2)
+  (if (<= x 2)
       1
-      (+ (fib (- x 1) (- x 2)))))
+      (+ (fib (- x 1))  (fib (- x 2)))))
