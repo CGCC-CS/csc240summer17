@@ -32,7 +32,7 @@ class myClass {
   ~myClass() {
     cout << "  Destructor " << b << ": " << *a << " (" << a << ")" << endl;
     delete a;
-    a = NULL;
+    a = nullptr;
   }
 
   void print(string s) {
