@@ -3,104 +3,93 @@ knows_scheme(alice).
 knows_prolog(alice).
 passes_240(X) :- knows_scheme(X), knows_prolog(X).
 
-factorial(1,1) :- !.
-factorial(N, F) :- N1 is N - 1, factorial(N1, F1), F is N * F1.
+% recursion
+factorial(1,1).
+factorial(N, F) :- N > 1, N1 is N - 1, factorial(N1, F1), F is N * F1.
 
 
-% facts
-weather(phoenix, spring, hot).
-weather(phoenix, summer, hot).
-weather(phoenix, fall, hot).
-weather(phoenix, winter, warm).
-weather(wellington, spring, warm).
-weather(wellington, summer, warm).
-weather(wellington, fall, hot).
-weather(wellington, winter, cold).
-weather(toronto, spring, cold).
-weather(toronto, summer, hot).
-weather(toronto, fall, cold).
-weather(toronto, winter, cold).
+factorial_cut(1,1) :- !.
+factorial_cut(N, F) :- N1 is N - 1, factorial_cut(N1, F1), F is N * F1.
 
-location(london, 51, 0).
-location(phoenix, 33, 112).
-location(tokyo, 35, -139).
-location(rome, 41, -12).
-location(madrid, 48, 3).
-location(canberra, -35, -149).
-location(johannesburg, -26, -28).
+division(nl_west, [lad, az, co, sd, sf]).
+division(al_west, [laa, hou, tex, sea, oak]).
+in_division(Team, Division) :- division(Division, Members), member(Team, Members).
 
-:- location(phoenix, Lat, Long), write(['Lat', Lat, 'Long', Long]), nl.
-
-north_of(X,Y) :-
-	location(X, Lat1, _Long1),
-	location(Y, Lat2, _Long2),
-	Lat1 > Lat2.
-west_of(X,Y) :-
-	location(X, _Lat1, Long1),
-	location(Y, _Lat2, Long2),
-	Long1 > Long2.
-
-% math
+%math
 double(X,Y) :- Y is 2 * X.
 increment(X,Y) :- Y is X + 1.
 less_than_square_root(X,Y) :- Y < sqrt(X).
 tangent(X,Y) :- Y is tan(X).
 divides(X,Y) :- 0 is X mod Y.
 
-% family
+%family
 father(bob, alice).
 mother(sue, james).
 mother(sue, alice).
 mother(ann, sue).
 
-dad(X,Y) :- father(X,Y).
-child(X,Y) :- father(Y,X).
-child(X,Y) :- mother(Y,X).
+dad(Father,Child) :- father(Father,Child).
+child(Child,Father) :- father(Father,Child).
+child(Child,Mother) :- mother(Mother,Child).
+parent(Father,Child) :- father(Father,Child).
+parent(Mother,Child) :- mother(Mother,Child).
 
-%BAD ancestor(A,D) :- ancestor(A,P), ancestor(P,D).
-ancestor(A,D) :- parent(A,D).
-ancestor(A,D) :- parent(A,P), ancestor(P,D).
+%BAD ancestor(Ancestor,Descendant) :- ancestor(Ancestor,Intermediary), 
+%BAD	                              ancestor(Intermediary,Descendant).
+ancestor(Ancestor,Descendant) :- parent(Ancestor,Descendant).
+ancestor(Ancestor,Descendant) :- parent(Ancestor,Intermediary),
+                                 ancestor(Intermediary,Descendant).
 
 % lists & pairs
 % PAIR: [ Head | Tail ]
 % LIST: [] or [ Head | TailList ]
-pairparts([H | T], H, T).
-starts_with_same_two([H, H | _T]).
-third_in_list([_, _, Third | _T], Third).
 
-% return first thing in a list
-first([], []).
+pairparts([H|T], H, T).
+starts_with_same([H, H | _T]).
+list_of_size_three([_, _, _]).
+third_in_list([_, _, X | _T], X).
+
+% return first item in a list
 first([H|_T], H).
 
-% is_list predicate
-islist([]).
-%islist([_H|_T]).  % NO - this succeds if the parameter is a pair
-islist([_H|T]) :- islist(T).
-
-% find the last element of a list
+% last element of a list
 lastelement([X], X).
-lastelement([_H | T], Last) :- lastelement(T,Last).
+lastelement([_H|T], Last) :- lastelement(T, Last).
 
 %firsttwo/3
-firsttwo([H1, H2|_T], H1, H2).
+firsttwo([H1, H2 | _T], H1, H2).
 %firsttwo/2
-firsttwo([H1, H2|_T], [H1, H2]).
+firsttwo([H1, H2 | _T], [H1, H2]).
 
-listsize([],0) :- !.
-listsize([_H | T], S) :- listsize(T,SizeT), S is SizeT + 1.
+listsize([], 0) :- !.
+listsize([_H | T], S) :- listsize(T, SizeT), S is SizeT + 1.
 
-%increment each member of the list
-addonetoall([],[]) :- !.
-addonetoall([H | T], [H1 | T1]) :- H1 is H + 1, addonetoall(T,T1).
+%increment each member of list
+addonetoall([], []) :- !.
+addonetoall([H | T], [H1 | T1]) :- H1 is H + 1, addonetoall(T, T1).
+
+% islist predicate
+islist([]).
+islist([_H|T]) :- islist(T).
 
 % keep only multiples of 3
 onlymults3([],[]) :- !.
-onlymults3([H | T], [H | T1]) :- 0 is mod(H, 3), !, onlymults3(T, T1).
-onlymults3([_H | T], T1) :- !, onlymults3(T, T1).
+onlymults3([H | T], [H | T1]) :- 0 is H mod 3, !, onlymults3(T, T1).
+onlymults3([_H | T], T1) :- onlymults3(T, T1).
 
-% remove every other element
-remove_eo([], []) :- !.
-remove_eo([X], [X]) :- !.
-remove_eo([H, _H2 | T], [H | T1]) :- remove_eo(T, T1).
+% remove matching
+removeit([],_X,[]) :- !.
+removeit([X | T], X, T1) :- !, removeit(T, X, T1).           % Head is what we are removing
+removeit([H | T], X, [H | T1]) :- !, removeit(T, X, T1). 
+
+% remove every other one
+remove_eoo([], []) :- !.
+remove_eoo([X], [X]) :- !.
+remove_eoo([H, _H2 | T], [H | TailWithEOORemoved]) :- remove_eoo(T, TailWithEOORemoved).
+
+
+
+
+
 
 
